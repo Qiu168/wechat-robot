@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"github.com/eatmoreapple/openwechat"
+	"strings"
 )
 
 func main() {
@@ -10,10 +11,24 @@ func main() {
 
 	// 注册消息处理函数
 	bot.MessageHandler = func(msg *openwechat.Message) {
-		if msg.IsText() && msg.Content == "ping" {
-			msg.ReplyText("pong")
+		if msg.IsText() {
+			if strings.Contains(msg.Content, "@湫 ") {
+				//user, _ := msg.SenderInGroup()
+				//resp := gpt(msg.Content[len("@湫 "):])
+				msg.ReplyText("hel" +
+					"lo")
+			}
 		}
 	}
+	//bot.MessageHandler = func(msg *openwechat.Message) {
+	//	if msg.IsText() {
+	//		if strings.Contains(msg.Content, "湫") {
+	//			println(msg.Content)
+	//			msg.ReplyText("666")
+	//		}
+	//
+	//	}
+	//}
 	// 注册登陆二维码回调
 	bot.UUIDCallback = openwechat.PrintlnQrcodeUrl
 
@@ -34,9 +49,9 @@ func main() {
 	friends, err := self.Friends()
 	fmt.Println(friends, err)
 
-	// 获取所有的群组
-	groups, err := self.Groups()
-	fmt.Println(groups, err)
+	//// 获取所有的群组
+	//groups, err := self.Groups()
+	//fmt.Println(groups, err)
 
 	// 阻塞主goroutine, 直到发生异常或者用户主动退出
 	bot.Block()
