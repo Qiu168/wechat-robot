@@ -2,11 +2,10 @@ package main
 
 import (
 	"encoding/json"
-	"fmt"
 	"io/ioutil"
+	"log"
 	"net/http"
 	"net/url"
-	"strings"
 )
 
 type XHResp struct {
@@ -20,25 +19,37 @@ func getXinghuo(message string) string {
 	query := url.Values{}
 	query.Add("question", message)
 	urlWithParams := URL + "?" + query.Encode()
-	request, _ := http.NewRequest("GET", urlWithParams, nil)
-	fmt.Println(request.URL.Path)
-	//method := "GET"
-	res, _ := (&http.Client{}).Do(request)
+	errStr := "出现错误"
+	request, err := http.NewRequest("GET", urlWithParams, nil)
+	if err != nil {
+		log.Fatalf("Error creating request: %v", err)
+		return errStr
+	}
+
+	res, err := (&http.Client{}).Do(request)
+	if err != nil {
+		log.Fatalf("Error sending request: %v", err)
+		return errStr
+	}
 	defer res.Body.Close()
+
+	if res.StatusCode != http.StatusOK {
+		log.Fatalf("HTTP request failed with status code: %d", res.StatusCode)
+		return errStr
+	}
+
 	body, err := ioutil.ReadAll(res.Body)
 	if err != nil {
-		fmt.Println(err)
-		return ""
+		log.Fatalf("Error reading response body: %v", err)
+		return errStr
 	}
-	ans := string(body)
-	fmt.Println("data=" + ans)
+
 	resp := &XHResp{}
-	decoder := json.NewDecoder(strings.NewReader(ans))
-	err = decoder.Decode(resp)
-	if err != nil {
-		fmt.Errorf("err:%v", err)
+	if err := json.Unmarshal(body, resp); err != nil {
+		log.Fatalf("Error decoding JSON response: %v", err)
+		return errStr
 	}
-	fmt.Println(resp)
-	fmt.Println(resp.Data)
+
+	log.Println("Response:", resp)
 	return resp.Data
 }
