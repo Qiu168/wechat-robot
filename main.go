@@ -6,7 +6,7 @@ import (
 	"strings"
 )
 
-func main3() {
+func main() {
 	//print(getXinghuo("你好"))
 	//fmt.Scanf("t")
 	bot := openwechat.DefaultBot(openwechat.Desktop) // 桌面模式
@@ -31,11 +31,11 @@ func main3() {
 				if err != nil {
 					fmt.Println("not group")
 				}
-				fmt.Println("group username" + sender.NickName)
-				resp := "nitian:xs,zsj"
+				fmt.Println("group username" + sender.DisplayName)
+				resp := xinghuo(s)
 				//resp := getXinghuo(s)
 				fmt.Println(resp)
-				text, err := msg.ReplyText(resp)
+				text, err := msg.ReplyText("@" + sender.DisplayName + " " + resp)
 				if err != nil {
 					fmt.Errorf("%v", err)
 				}
@@ -52,7 +52,6 @@ func main3() {
 	//
 	//	}
 	//}
-
 	// 注册登陆二维码回调
 	bot.UUIDCallback = openwechat.PrintlnQrcodeUrl
 

@@ -36,10 +36,6 @@ func gpt(content string) string {
 		`{
 			"messages": [
 				{
-					"role": "system",
-					"content": "你是一个能干的助手."
-				},
-				{
 					"role": "user",
 					"content": "` + content + `"
 				}

@@ -6,13 +6,12 @@ import (
 	"encoding/base64"
 	"encoding/json"
 	"fmt"
+	"github.com/gorilla/websocket"
 	"io/ioutil"
 	"net/http"
 	"net/url"
 	"strings"
 	"time"
-
-	"github.com/gorilla/websocket"
 )
 
 /**
@@ -22,13 +21,13 @@ import (
  */
 
 var (
-	hostUrl   = "wss://aichat.xf-yun.com/v1/chat"
-	appid     = "XXXXXXXX"
-	apiSecret = "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
-	apiKey    = "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
+	hostUrl   = "ws://spark-api.xf-yun.com/v3.5/chat"
+	appid     = "3fa8a364"
+	apiSecret = "YzU4YjBlMDEzYWEyNGNlYTRhNTFkOTNk"
+	apiKey    = "cc591fcaab0d274f997f84024627f22a"
 )
 
-func main2() {
+func xinghuo(question string) string {
 	// fmt.Println(HmacWithShaTobase64("hmac-sha256", "hello\nhello", "hello"))
 	// st := time.Now()
 	d := websocket.Dialer{
@@ -38,14 +37,14 @@ func main2() {
 	conn, resp, err := d.Dial(assembleAuthUrl1(hostUrl, apiKey, apiSecret), nil)
 	if err != nil {
 		panic(readResp(resp) + err.Error())
-		return
+		return "error"
 	} else if resp.StatusCode != 101 {
 		panic(readResp(resp) + err.Error())
 	}
 
 	go func() {
 
-		data := genParams1(appid, "你是谁，可以干什么？")
+		data := genParams1(appid, question)
 		conn.WriteJSON(data)
 
 	}()
@@ -63,9 +62,9 @@ func main2() {
 		err1 := json.Unmarshal(msg, &data)
 		if err1 != nil {
 			fmt.Println("Error parsing JSON:", err)
-			return
+			return "error"
 		}
-		fmt.Println(string(msg))
+		//fmt.Println(string(msg))
 		//解析数据
 		payload := data["payload"].(map[string]interface{})
 		choices := payload["choices"].(map[string]interface{})
@@ -74,7 +73,7 @@ func main2() {
 
 		if code != 0 {
 			fmt.Println(data["payload"])
-			return
+			return "error"
 		}
 		status := choices["status"].(float64)
 		fmt.Println(status)
@@ -96,8 +95,8 @@ func main2() {
 	}
 	//输出返回结果
 	fmt.Println(answer)
-
-	time.Sleep(1 * time.Second)
+	return answer
+	//time.Sleep(1 * time.Second)
 }
 
 // 生成参数
@@ -113,7 +112,7 @@ func genParams1(appid, question string) map[string]interface{} { // 根据实际
 		},
 		"parameter": map[string]interface{}{ // 根据实际情况修改返回的数据结构和字段名
 			"chat": map[string]interface{}{ // 根据实际情况修改返回的数据结构和字段名
-				"domain":      "general",    // 根据实际情况修改返回的数据结构和字段名
+				"domain":      "generalv3",  // 根据实际情况修改返回的数据结构和字段名
 				"temperature": float64(0.8), // 根据实际情况修改返回的数据结构和字段名
 				"top_k":       int64(6),     // 根据实际情况修改返回的数据结构和字段名
 				"max_tokens":  int64(2048),  // 根据实际情况修改返回的数据结构和字段名
