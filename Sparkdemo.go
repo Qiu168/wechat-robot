@@ -22,9 +22,9 @@ import (
 
 var (
 	hostUrl   = "ws://spark-api.xf-yun.com/v3.5/chat"
-	appid     = "3fa8a364"
-	apiSecret = "YzU4YjBlMDEzYWEyNGNlYTRhNTFkOTNk"
-	apiKey    = "cc591fcaab0d274f997f84024627f22a"
+	appid     = "xxxxxx"
+	apiSecret = "xxxxxxxx"
+	apiKey    = "xxxxxxxx"
 )
 
 func xinghuo(question string) string {
